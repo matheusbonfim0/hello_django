@@ -1,22 +1,30 @@
-from django.shortcuts import render, HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.utils.html import format_html
 
-# Create your views here.
+
+def _result(title, value_a, value_b, result):
+    return HttpResponse(
+        format_html('<h1>{}: {} e {} = {}</h1>', title, value_a, value_b, result)
+    )
+
 
 def hello(request, nome, idade):
-    return HttpResponse('<h1>Hello {} de {} anos<h1>'.format(nome, idade))
+    return HttpResponse(format_html('<h1>Hello {} de {} anos</h1>', nome, idade))
+
 
 def soma(request, valor_a, valor_b):
-    soma = valor_a + valor_b
-    return HttpResponse('<h1>A soma entre {} e {} = {}<h1>'.format(valor_a, valor_b, soma))
+    return _result('Soma', valor_a, valor_b, valor_a + valor_b)
+
 
 def multiplicacao(request, valor_a, valor_b):
-    multiplicacao = valor_a * valor_b
-    return HttpResponse('<h1>A Multiplicacao entre {} e {} = {}<h1>'.format(valor_a, valor_b, multiplicacao))
+    return _result('Multiplicação', valor_a, valor_b, valor_a * valor_b)
+
 
 def divisao(request, valor_a, valor_b):
-    divisao = valor_a / valor_b
-    return HttpResponse('<h1>A divisao entre {} e {} = {}<h1>'.format(valor_a, valor_b, divisao))
+    if valor_b == 0:
+        return HttpResponseBadRequest('O divisor não pode ser zero.')
+    return _result('Divisão', valor_a, valor_b, valor_a / valor_b)
+
 
 def subtracao(request, valor_a, valor_b):
-    subtracao = valor_a - valor_b
-    return HttpResponse('<h1>A subtracao entre {} e {} = {}<h1>'.format(valor_a, valor_b, subtracao))
+    return _result('Subtração', valor_a, valor_b, valor_a - valor_b)
